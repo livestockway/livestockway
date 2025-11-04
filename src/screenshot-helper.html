@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LivestockWay TMS - Screenshot Helper</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 8px;
+      color: #1a202c;
+    }
+    .subtitle {
+      font-size: 18px;
+      color: #718096;
+      margin-bottom: 32px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: #f7fafc;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+    .stat-number {
+      font-size: 32px;
+      font-weight: bold;
+      color: #667eea;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: #718096;
+      margin-top: 4px;
+    }
+    .section {
+      margin-bottom: 32px;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+    }
+    .badge.green { background: #29CA8D; }
+    .badge.orange { background: #F97316; }
+    .badge.gray { background: #6B7280; }
+    .badge.blue { background: #172039; }
+    .badge.purple { background: #667eea; }
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+    }
+    .page-item {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .page-item:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+    .page-item.captured {
+      background: #f0fdf4;
+      border-color: #22c55e;
+    }
+    .page-info {
+      flex: 1;
+    }
+    .page-name {
+      font-weight: 600;
+      color: #1a202c;
+      margin-bottom: 4px;
+    }
+    .page-path {
+      font-size: 12px;
+      color: #718096;
+      font-family: 'Monaco', monospace;
+    }
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: scale(1.05);
+    }
+    .btn-success {
+      background: #22c55e;
+      color: white;
+      pointer-events: none;
+    }
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .progress-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s;
+    }
+    .instructions {
+      background: #fffbeb;
+      border: 2px solid #fbbf24;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 32px;
+    }
+    .instructions h3 {
+      color: #92400e;
+      margin-bottom: 12px;
+    }
+    .instructions ol {
+      margin-left: 20px;
+      color: #78350f;
+    }
+    .instructions li {
+      margin-bottom: 8px;
+    }
+    .icon {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📸 LivestockWay TMS Screenshot Helper</h1>
+    <p class="subtitle">Click each page to open it, then use Chrome DevTools to capture screenshots</p>
+    
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-number" id="total-pages">45</div>
+        <div class="stat-label">Total Pages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="captured-count">0</div>
+        <div class="stat-label">Captured</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="remaining-count">45</div>
+        <div class="stat-label">Remaining</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="progress-percent">0%</div>
+        <div class="stat-label">Progress</div>
+      </div>
+    </div>
+    
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+    
+    <div class="instructions">
+      <h3>📋 How to Capture Screenshots:</h3>
+      <ol>
+        <li>Make sure your dev server is running (<code>npm run dev</code>)</li>
+        <li>Click a page link below to open it in a new tab</li>
+        <li>Press <strong>Cmd+Shift+P</strong> (Mac) or <strong>Ctrl+Shift+P</strong> (Windows)</li>
+        <li>Type "screenshot" and select <strong>"Capture full size screenshot"</strong></li>
+        <li>Save the PNG file with the suggested name</li>
+        <li>Click "✓ Mark as Captured" on this page</li>
+        <li>Repeat for all 45 pages</li>
+      </ol>
+    </div>
+    
+    <!-- PUBLIC PAGES -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge purple">Public</span>
+        <span>Public Pages (5)</span>
+      </div>
+      <div class="page-grid" id="public-pages"></div>
+    </div>
+    
+    <!-- HAULER PAGES -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge green">Hauler</span>
+        <span>Hauler Pages (10)</span>
+      </div>
+      <div class="page-grid" id="hauler-pages"></div>
+    </div>
+    
+    <!-- SHIPPER PAGES -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge orange">Shipper</span>
+        <span>Shipper Pages (9)</span>
+      </div>
+      <div class="page-grid" id="shipper-pages"></div>
+    </div>
+    
+    <!-- DRIVER PAGES -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge green">Driver</span>
+        <span>Driver Pages (6)</span>
+      </div>
+      <div class="page-grid" id="driver-pages"></div>
+    </div>
+    
+    <!-- STAKEHOLDER PAGES -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge gray">Stakeholder</span>
+        <span>Stakeholder Pages (6)</span>
+      </div>
+      <div class="page-grid" id="stakeholder-pages"></div>
+    </div>
+    
+    <!-- ADMIN PAGES -->
+    <div class="section">
+      <div class="section-title">
+        <span class="badge blue">Admin</span>
+        <span>Super Admin Pages (4)</span>
+      </div>
+      <div class="page-grid" id="admin-pages"></div>
+    </div>
+  </div>
+  
+  <script>
+    const BASE_URL = 'http://localhost:5173';
+    
+    const pages = {
+      public: [
+        { name: 'Landing Page', path: '/', filename: '01-landing-page' },
+        { name: 'Login', path: '/login', filename: '02-login-page' },
+        { name: 'Verification', path: '/verification', filename: '03-verification' },
+        { name: 'Forgot Password', path: '/forgot-password', filename: '04-forgot-password' },
+        { name: 'Onboarding Wizard', path: '/onboarding', filename: '05-onboarding-wizard', requiresAuth: true },
+      ],
+      hauler: [
+        { name: 'Dashboard', path: '/hauler/dashboard', filename: '06-hauler-dashboard' },
+        { name: 'Loadboard', path: '/hauler/loadboard', filename: '07-hauler-loadboard' },
+        { name: 'Fleet Management', path: '/hauler/fleet', filename: '08-hauler-fleet' },
+        { name: 'Trips', path: '/hauler/trips', filename: '09-hauler-trips' },
+        { name: 'Earnings', path: '/hauler/earnings', filename: '10-hauler-earnings' },
+        { name: 'Team Management', path: '/hauler/team', filename: '11-hauler-team' },
+        { name: 'Marketplace', path: '/hauler/marketplace', filename: '12-hauler-marketplace' },
+        { name: 'Documents', path: '/hauler/documents', filename: '13-hauler-documents' },
+        { name: 'Settings', path: '/hauler/settings', filename: '14-hauler-settings' },
+        { name: 'Support', path: '/hauler/support', filename: '15-hauler-support' },
+      ],
+      shipper: [
+        { name: 'Dashboard', path: '/shipper/dashboard', filename: '16-shipper-dashboard' },
+        { name: 'My Loads', path: '/shipper/loads', filename: '17-shipper-loads' },
+        { name: 'Loadboard', path: '/shipper/loadboard', filename: '18-shipper-loadboard' },
+        { name: 'Trips', path: '/shipper/trips', filename: '19-shipper-trips' },
+        { name: 'Payments', path: '/shipper/payments', filename: '20-shipper-payments' },
+        { name: 'Documents', path: '/shipper/documents', filename: '21-shipper-documents' },
+        { name: 'Marketplace', path: '/shipper/marketplace', filename: '22-shipper-marketplace' },
+        { name: 'Settings', path: '/shipper/settings', filename: '23-shipper-settings' },
+        { name: 'Support', path: '/shipper/support', filename: '24-shipper-support' },
+      ],
+      driver: [
+        { name: 'Dashboard', path: '/driver/dashboard', filename: '25-driver-dashboard' },
+        { name: 'Trips', path: '/driver/trips', filename: '26-driver-trips' },
+        { name: 'Expenses', path: '/driver/expenses', filename: '27-driver-expenses' },
+        { name: 'Documents', path: '/driver/documents', filename: '28-driver-documents' },
+        { name: 'Settings', path: '/driver/settings', filename: '29-driver-settings' },
+        { name: 'Support', path: '/driver/support', filename: '30-driver-support' },
+      ],
+      stakeholder: [
+        { name: 'Dashboard', path: '/stakeholder/dashboard', filename: '31-stakeholder-dashboard' },
+        { name: 'Marketplace', path: '/stakeholder/marketplace', filename: '32-stakeholder-marketplace' },
+        { name: 'Earnings', path: '/stakeholder/earnings', filename: '33-stakeholder-earnings' },
+        { name: 'Documents', path: '/stakeholder/documents', filename: '34-stakeholder-documents' },
+        { name: 'Settings', path: '/stakeholder/settings', filename: '35-stakeholder-settings' },
+        { name: 'Support', path: '/stakeholder/support', filename: '36-stakeholder-support' },
+      ],
+      admin: [
+        { name: 'Dashboard', path: '/admin/dashboard', filename: '37-admin-dashboard' },
+        { name: 'Marketplace', path: '/admin/marketplace', filename: '38-admin-marketplace' },
+        { name: 'Support', path: '/admin/support', filename: '39-admin-support' },
+        { name: 'Settings', path: '/admin/settings', filename: '40-admin-settings' },
+      ],
+    };
+    
+    // Load captured state from localStorage
+    let capturedPages = JSON.parse(localStorage.getItem('capturedScreenshots') || '[]');
+    
+    function updateProgress() {
+      const total = Object.values(pages).flat().length;
+      const captured = capturedPages.length;
+      const remaining = total - captured;
+      const percent = Math.round((captured / total) * 100);
+      
+      document.getElementById('captured-count').textContent = captured;
+      document.getElementById('remaining-count').textContent = remaining;
+      document.getElementById('progress-percent').textContent = percent + '%';
+      document.getElementById('progress-fill').style.width = percent + '%';
+    }
+    
+    function markAsCaptured(filename) {
+      if (!capturedPages.includes(filename)) {
+        capturedPages.push(filename);
+        localStorage.setItem('capturedScreenshots', JSON.stringify(capturedPages));
+        updateProgress();
+        
+        const item = document.querySelector(`[data-filename="${filename}"]`);
+        if (item) {
+          item.classList.add('captured');
+          const btn = item.querySelector('.btn');
+          btn.textContent = '✓ Captured';
+          btn.className = 'btn btn-success btn-small';
+        }
+      }
+    }
+    
+    function renderPages(section, pagesArray) {
+      const container = document.getElementById(`${section}-pages`);
+      container.innerHTML = pagesArray.map(page => {
+        const isCaptured = capturedPages.includes(page.filename);
+        return `
+          <div class="page-item ${isCaptured ? 'captured' : ''}" data-filename="${page.filename}">
+            <div class="page-info">
+              <div class="page-name">${page.name}</div>
+              <div class="page-path">${page.path}</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <a href="${BASE_URL}${page.path}" target="_blank" class="btn btn-primary btn-small">
+                Open →
+              </a>
+              <button 
+                onclick="markAsCaptured('${page.filename}')" 
+                class="btn ${isCaptured ? 'btn-success' : 'btn-primary'} btn-small"
+              >
+                ${isCaptured ? '✓ Captured' : 'Mark ✓'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // Render all sections
+    Object.keys(pages).forEach(section => {
+      renderPages(section, pages[section]);
+    });
+    
+    updateProgress();
+    
+    // Reset button (hidden, press Alt+R to reset)
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.key === 'r') {
+        if (confirm('Reset all captured screenshots?')) {
+          localStorage.removeItem('capturedScreenshots');
+          location.reload();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
